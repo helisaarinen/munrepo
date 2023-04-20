@@ -1,0 +1,13 @@
+@charset "UTF-8";
+label{
+	display: block;
+	width: 100px;
+	float: left;
+}
+input {
+	margin-bottom: 5px;
+}
+body{
+	font-family:Tahoma, sans-serif;
+	backround-color: rgba(215, 245, 147, 0.349);
+}
