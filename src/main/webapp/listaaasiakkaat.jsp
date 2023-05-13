@@ -5,62 +5,36 @@
 <head>
 
 <meta charset="ISO-8859-1">
-<link rel="stylesheet" type="text/css" href= "tyyli.css">
 <script src ="scripts/main.js"></script>
+<link rel="stylesheet" type="text/css" href= "css/tyyli.css">
 <title>Asiakkaat</title>
 </head>
-<body>
-Testi
-
+<body> 	
 <table id="listaus">
 <thead>
+		<tr>
+			<th colspan="5" class="oikealle"><a id="linkki" href="lisaaasiakas.jsp">Lisää uusi asiakas</a></th>
+		</tr>
 <tr>
-<th>Asiakas id</th>
+<th>Hakusana:</th>
+<th colspan="3"><input type= "text" id="hakusana"></th>
+<th><input type= "button" value = "hae" id="hakunappi" onclick= "haeAsiakkaat()"></th>
+</tr>
+<tr>
+
 <th>Etunimi</th>
 <th>Sukunimi</th>
 <th>Puhelinnumero</th>
 <th>Sähköpostiosoite</th>
 <th> </th>
+
 </tr>
 </thead>
 <tbody id ="tbody"></tbody>
 </table>
-
-
-<span id="ilmo"> </span>
-
-
+<span id = "ilmo"></span>
 <script>
-
-/*function haeAsiakkaat(){
-	let url = "asiakkaat";
-	let requestOptions = {
-			method: "GET",
-			headers: { "Content-Type": "application/x-www.form-urlencoded" }
-	};
-	fetch(url, requestOptions)
-	.then(response => response.json()) // muutetaan vastausteksti JSON-objektiksi
-	//.then(response => console.log(response)) //
-	.then(response => printItems(response))
-	.catch(errorText => console.error("Fetch failed: " + errorText))
-}
-
-function printItems(respObjList){
-	let htmlStr="";
-	for(let item of respObjList){
-		htmlStr+="<tr id = 'rivi_'" +item.asiakas_id+"'>";
-		htmlStr+="<td>" + item.etunimi + "</td>";
-		htmlStr+="<td>" + item.sukunimi + "</td>";
-		htmlStr+="<td>" + item.puhelin + "</td>";
-		htmlStr+="<td>" + item.sposti + "</td>";
-		htmlStr+="</tr>"
-	
-	}
-	document.getElementById("tbody").innerHTML = htmlStr;	
-}
-*/
 haeAsiakkaat();
 </script>
-
 </body>
 </html>
