@@ -6,10 +6,11 @@
 
 <meta charset="ISO-8859-1">
 <script src ="scripts/main.js"></script>
+<script src="scripts/io.js"></script>
 <link rel="stylesheet" type="text/css" href= "css/tyyli.css">
 <title>Asiakkaat</title>
 </head>
-<body> 	
+<body onload="asetaFocus('hakusana')"  onkeydown="tutkiKey(event, 'listaa')"> 	
 <table id="listaus">
 <thead>
 		<tr>
@@ -30,7 +31,7 @@
 
 </tr>
 </thead>
-<tbody id ="tbody"></tbody>
+<tbody id ="tbody"></tbody> 
 </table>
 <span id = "ilmo"></span>
 <script>

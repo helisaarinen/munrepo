@@ -8,9 +8,9 @@
 <script src="scripts/io.js"></script>
 <link rel="stylesheet" type="text/css" href= "css/tyyli.css">
 
-<title>Asiakkaan lisääminen</title>
+<title>Asiakkaan tietojen muuttaminen</title>
 </head>
-<body onload="asetaFocus('etunimi')" onkeydown="tutkiKey(event, 'lisaa')">
+<body onload="asetaFocus('etunimi')" onkeydown="tutkiKey(event, 'paivita')">
 <form name="lomake">
 	<table>
 		<thead>	
@@ -31,10 +31,11 @@
 				<td><input type="text" name="sukunimi" id="sukunimi" /></td>
 				<td><input type="text" name="puhelin" id="puhelin" /></td>
 				<td><input type="text" name="sähköpostiosoite" id="sposti" /></td> 
-				<td><input type="button" value="Lisää" onclick="tutkiJaLisaa()" /></td>
+				<td><input type="button" id="tallenna" value="Hyväksy" onclick="tutkiJaLisaa()" /></td>
 			</tr>
 		</tbody>
 	</table>
+	<input type="hidden" name="asiakas_id" id="asiakas_id">
 </form>
 <p id="ilmo"></p>
 </body>

@@ -6,43 +6,31 @@ function serialize_form(form){
 	);
 }
 
-function haeAsiakkaat(){
-	let url = "asiakkaat?hakusana" + document.getElementById("hakusana").value;
-	let requestOptions = {
-			method: "GET",
-			headers: { "Content-Type": "application/x-www-form-urlencoded" }
-	};
-	fetch(url, requestOptions)
-	.then(response => response.json()) // muutetaan vastausteksti JSON-objektiksi
-	//.then(response => console.log(response)) //
-	.then(response => printItems(response))
-	.catch(errorText => console.error("Fetch failed: " + errorText))
+
+//funktio arvon lukemiseen urlista avaimen perusteella
+function requestURLParam(sParam){
+    let sPageURL = window.location.search.substring(1);
+    let sURLVariables = sPageURL.split("&");
+    for (let i = 0; i < sURLVariables.length; i++){
+        let sParameterName = sURLVariables[i].split("=");
+        if(sParameterName[0] == sParam){
+            return sParameterName[1];
+        }
+    }
 }
 
-
-//kirjoitetaan tiedot taulukkoon JSON-objektilistasta 
-function printItems(respObjList){
-	//console.log(respObjList);
-	let htmlStr="";
-	for(let item of respObjList){ //yksi kokoelmaloopeita
-		htmlStr+="<tr id = 'rivi_'" +item.asiakas_id+"'>";
-		htmlStr+="<td>" + item.etunimi + "</td>";
-		htmlStr+="<td>" + item.sukunimi + "</td>";
-		htmlStr+="<td>" + item.puhelin + "</td>";
-		htmlStr+="<td>" + item.sposti + "</td>";
-		htmlStr+="<td><span class='poista' onclick=varmistaPoisto("+item.asiakas_id+",'"+encodeURI(item.etunimi)+"')>Poista</span></td>"; //item.id ei tarvitse 'hipsuja', koska se on int
-		//encodeURI() muutetaan erikoismerkit, välilyönnit jne. UTF-8 -merkeiksi
-		//decodeURI() otetaan vastaan
-		htmlStr+="</tr>"
-	
-	}
-	document.getElementById("tbody").innerHTML = htmlStr;	
-}
 
 //tutkitaan lisättävät tiedot ennen niiden lähettämistä vackendiin
 function tutkiJaLisaa(){
-	if(tutkiTiedot()){
+	if(tutkiTiedot()){ //jos tutkiTiedot palauttaa true,  lisää tiedot
 		lisaaTiedot();
+	}
+}
+
+//tutkitaan lisättävät tiedot ennen niiden lähettämistä vackendiin
+function tutkiJaPaivita(){
+	if(tutkiTiedot()){ //jos tutkiTiedot palauttaa true,  lisää tiedot
+		paivitaTiedot();
 	}
 }
 
@@ -59,7 +47,9 @@ function tutkiTiedot(){
 	}else if(document.getElementById("puhelin").value.length<7){
 		ilmo="Puhelinnumero ei kelpaa! Skarppaa vähä.";
 		document.getElementById("puhelin").focus();		
-	}else if(document.getElementById("sposti").value.length<7){
+	}else if(document.getElementById("sposti").value.length<7||document.getElementById("sposti").value.indexOf(".")==-1||document.getElementById("sposti").value.indexOf("@")==-1){
+		// -1 tarkoittaa, että merkkiä ei löydy
+		// voisi käyttää regular expression google java reg ex email 
 		ilmo="Anna sähköpostiosoite!";
 		document.getElementById("sposti").focus();		
 	}
@@ -81,63 +71,35 @@ function tutkiTiedot(){
 function siivoa(teksti){
 	teksti=teksti.replace(/</g, "");//&lt;
 	teksti=teksti.replace(/>/g, "");//&gt;	
-	teksti=teksti.replace(/'/g, "''");//&apos;	
+	teksti=teksti.replace(/'/g, "''");//&apos;
+	teksti=teksti.replace(/;/g, "");//&#59;	//sql-lauseen voi lopettaa puolipisteellä ja ajaa siihen toiseen lauseen eli tällä estetään se
+
 	return teksti;
 }
 
-//Funktio tietojen lisäämistä varten.
-//Kutsutaan backin POST-metodia ja välitettään kutsun mukana auton tiedot json-stringinä
-function lisaaTiedot(){
-	let formData = serialize_form(document.lomake);//Haetaan tiedot lomakkeelta ja muutetaan JSON-stringiksi
-	//console.log(formData);
-	let url="asiakkaat";
-	let requestOptions = {
-		method: "POST", //Lisätään asiakas
-		headers: {"Content-Type": "application/json"},//lähtevä data
-		body: formData //bodyssa lähtevä data on formdata
-		};
-		fetch(url, requestOptions)
-		.then(response => response.json()) //Muutetaan vastausteksti Json-objektiksi
-		.then(responseObj => {
-			//console.log(responseObj);
-			if(responseObj.response==0){ //laitetaan backend palauttamaan meille jotain
-				document.getElementById("ilmo").innerHTML = "Asiakkaan lisääminen epäonnistui.";
-				
-			}else if (responseObj.response==1){
-				document.getElementById("ilmo").innerHTML = "Asiakkaan lisääminen onnistui.";
-				document.lomake.reset(); //tyhjennetään lomake
-			}
-					setTimeout(function(){document.getElementById("ilmo").innerHTML="";},3000);
-		})
-		.catch(errorText => console.errot("Fetch failed: " + errorText));
+
+function varmistaPoisto(asiakas_id, nimi){
+	if(confirm("Poista asiakas " + decodeURI(nimi)+ "?")){
+		poistaAsiakas(asiakas_id, nimi);
 	}
+}
+
+function asetaFocus(target){
+	document.getElementById(target).focus();
 	
+}
 
-function varmistaPoisto(etunimi, sukunimi){
-	if(confirm("Poista asiakas " + decodeURI(etunimi)+ decodeURI(sukunimi) + "?")){
-		poistaAsiakas(encodeURI(etunimi), encodeURI(sukunimi));
+//Funktio Enter-nappiin. Kutsu bodyn onkeydown()-metodista.
+function tutkiKey(event, target){	
+	if(event.keyCode==13){//13=Enter
+		if(target=="listaa"){
+			haeAsiakkaat();
+		}else if(target=="lisaa"){
+			tutkiJaLisaa();
+		}else if(target=="paivita"){
+			tutkiJaPaivita();
+		}
+	}else if(event.keyCode==113){//F2
+		document.location="listaaasiakkaat.jsp"; //F2 pääsee takaisin listaa asiakkaat -sivulle
 	}
 }
-
-function poistaAsiakas(etunimi,sukunimi){
-	let url = "asiakkaat?asiakas_id"+asiakas_id;
-	let requestOptions={
-		method: "DELETE",
-		//headers: { "Content-Type": "application/json"}
-	};
-	fetch(url, requestOptions)
-	.then(response => response.json()) //Muutetaan vastausteksti JSON-objektiksi
-	.then(responseObj => {
-		//console.log(responseObj);
-		if(responseObj.response==0){
-			alert("Asiakkaan poistaminen epäonnistui.");
-		}else if(responseObj.response==1){
-			document.getElementById("rivi_"+id).style.backgroundColor="red";
-			alert("Asiakkaan "+ decodeURI(etunimi) + decodeURI(sukunimi)  + " poistaminen onnistui.");
-			haeAsiakkaat();
-		}
-	})
-}
-
-
-
