@@ -1,6 +1,6 @@
 
 function haeAsiakkaat(){
-	let url = "asiakkaat?hakusana" + document.getElementById("hakusana").value;
+	let url = "asiakkaat?hakusana=" + document.getElementById("hakusana").value;
 	let requestOptions = {
 			method: "GET",
 			headers: { "Content-Type": "application/x-www-form-urlencoded" }
@@ -64,7 +64,7 @@ function lisaaTiedot(){
 	
 	
 function poistaAsiakas(asiakas_id, nimi){
-	let url = "asiakkaat?asiakas_id"+asiakas_id;
+	let url = "asiakkaat?asiakas_id="+asiakas_id;
 	let requestOptions={
 		method: "DELETE",
 		//headers: { "Content-Type": "application/json"}
@@ -77,7 +77,7 @@ function poistaAsiakas(asiakas_id, nimi){
 			alert("Asiakkaan poistaminen epäonnistui.");
 		}else if(responseObj.response==1){
 			document.getElementById("rivi_"+id).style.backgroundColor="red";
-			alert("Asiakkaan "+ decodeURI(etunimi) + decodeURI(sukunimi)  + " poistaminen onnistui.");
+			alert("Asiakkaan "+ decodeURI(nimi) + " poistaminen onnistui.");
 			haeAsiakkaat();
 		}
 	})

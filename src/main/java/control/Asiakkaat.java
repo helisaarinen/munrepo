@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
@@ -28,9 +29,13 @@ public class Asiakkaat extends HttpServlet {
       System.out.println("Asiakkaat.Asiakkaat()");
     }
 
-
+//tietojen hakeminen
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	System.out.println("Asiakkaat.doGet()");
+	HttpSession session = request.getSession(true);
+	if(session.getAttribute("kayttaja")==null){
+		return;
+	}
 	String hakusana = request.getParameter("hakusana");
 	String asiakas_id = request.getParameter("asiakas_id");
 	Dao dao = new Dao();
@@ -61,6 +66,10 @@ public class Asiakkaat extends HttpServlet {
 	//tietojen lisääminen
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Asiakkaat.doPost()");
+		HttpSession session = request.getSession(true);
+		if(session.getAttribute("kayttaja")==null){
+			return;
+		}
 		
 		//Luetaan JSON-tiedot POST-pyynnön bodysta ja luodaan niiden perusteella uusi auto
 		String strJSONInput = request.getReader().lines().collect(Collectors.joining());
@@ -80,9 +89,13 @@ public class Asiakkaat extends HttpServlet {
 		
 	}
 
-
+//tietojen muuttaminen
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Asiakkaat.doPut()");
+		HttpSession session = request.getSession(true);
+		if(session.getAttribute("kayttaja")==null){
+			return;
+		}
 		//Luetaan JSON-tiedot PUT-pyynnön bodysta ja luodaan niiden perusteella uusi auto
 		String strJSONInput = request.getReader().lines().collect(Collectors.joining());
 		//System.out.println("strJSONInput " + strJSONInput);		
@@ -98,9 +111,13 @@ public class Asiakkaat extends HttpServlet {
 		}
 	}
 
-
+//tietojen poistaminen
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Asiakkaat.doDelete()");
+		HttpSession session = request.getSession(true);
+		if(session.getAttribute("kayttaja")==null){
+			return;
+		}
 		
 		int asiakas_id = Integer.parseInt(request.getParameter("asiakas_id")); //merkki muutettava kokonaisluvukssi
 		Dao dao = new Dao();
